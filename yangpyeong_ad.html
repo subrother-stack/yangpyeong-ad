@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>양평현대모터스 광고</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #0B1D3A;
+    --navy-mid: #122952;
+    --blue: #1A4B8C;
+    --accent: #E8B84B;
+    --white: #F5F2EC;
+    --gray: #8A9AB5;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden;
+  }
+
+  #stage {
+    position: relative;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  /* ── CANVAS ── */
+  canvas#bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  /* ── SCENES ── */
+  .scene {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .scene.active { pointer-events: all; }
+
+  /* ── PROGRESS BAR ── */
+  #progress {
+    position: absolute; bottom: 0; left: 0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 100;
+    transition: none;
+    width: 0%;
+  }
+
+  /* ── SCENE 1: OPENING ── */
+  #s1 { flex-direction: column; text-align: center; }
+  #s1 .road {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 38%;
+    background: linear-gradient(180deg, #0d1117 0%, #1a2030 100%);
+    overflow: hidden;
+  }
+  #s1 .road::before {
+    content: '';
+    position: absolute; top: 50%; left: 0; right: 0;
+    height: 3px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 60px, transparent 60px 120px);
+    animation: roadMove 0.6s linear infinite;
+  }
+  @keyframes roadMove { from { transform: translateX(0) } to { transform: translateX(-120px) } }
+
+  #s1 .mountains {
+    position: absolute; bottom: 38%; left: 0; right: 0;
+    height: 180px;
+  }
+
+  #s1 .car {
+    position: absolute; bottom: calc(38% + 18px); left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+  }
+
+  #s1 .tagline {
+    position: absolute;
+    top: 12%;
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(18px, 4vw, 42px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-align: center;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.6);
+  }
+  #s1 .tagline span { color: var(--accent); }
+
+  /* ── SCENE 2: HISTORY ── */
+  #s2 {
+    background: var(--navy);
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #s2 .bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(26,75,140,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,75,140,0.15) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  #s2 .year {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(80px, 18vw, 200px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    bottom: -20px;
+    right: -10px;
+    line-height: 1;
+    user-select: none;
+  }
+  #s2 .content {
+    position: relative; z-index: 2;
+    text-align: center;
+  }
+  #s2 .badge {
+    display: inline-block;
+    font-size: clamp(10px, 1.5vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 6px 18px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  #s2 h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(28px, 6vw, 72px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  #s2 h2 em { color: var(--accent); font-style: normal; }
+  #s2 .sub {
+    font-size: clamp(12px, 2vw, 18px);
+    color: var(--gray);
+    letter-spacing: 0.1em;
+  }
+  #s2 .timeline {
+    display: flex; gap: 40px;
+    margin-top: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  #s2 .titem {
+    text-align: center;
+  }
+  #s2 .titem .num {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+  #s2 .titem .label {
+    font-size: clamp(10px, 1.5vw, 13px);
+    color: var(--gray);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── SCENE 3: 정기검사 ── */
+  #s3 { overflow: hidden; }
+  #s3 .split-left {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 50%;
+    background: var(--navy-mid);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  #s3 .split-right {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 50%;
+    background: var(--accent);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px;
+    overflow: hidden;
+  }
+  #s3 .split-right::before {
+    content: '합격';
+    position: absolute;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 180px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.12);
+    transform: rotate(-15deg);
+  }
+  #s3 .icon-wrap {
+    width: 100px; height: 100px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+  }
+  #s3 .icon-wrap svg { width: 50px; height: 50px; }
+  #s3 .left-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(22px, 4vw, 42px);
+    font-weight: 700;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  #s3 .left-sub {
+    font-size: clamp(11px, 1.8vw, 15px);
+    color: var(--gray);
+    text-align: center;
+    line-height: 1.8;
+  }
+  #s3 .check-badge {
+    position: relative; z-index: 2;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(36px, 7vw, 80px);
+    font-weight: 900;
+    padding: 20px 40px;
+    text-align: center;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  #s3 .check-sub {
+    position: relative; z-index: 2;
+    font-size: clamp(12px, 2vw, 16px);
+    color: var(--navy);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  #s3 .price-row {
+    position: relative; z-index: 2;
+    margin-top: 20px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  #s3 .price-item {
+    background: rgba(0,0,0,0.15);
+    color: var(--navy);
+    font-size: clamp(11px, 1.6vw, 14px);
+    font-weight: 700;
+    padding: 8px 20px;
+    display: flex; justify-content: space-between; gap: 20px;
+    min-width: 200px;
+  }
+
+  /* ── SCENE 4: SERVICES ── */
+  #s4 {
+    background: var(--white);
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px;
+    text-align: center;
+  }
+  #s4 .s4-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(24px, 5vw, 54px);
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  #s4 .s4-sub {
+    font-size: clamp(11px, 1.8vw, 16px);
+    color: #666;
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+  }
+  #s4 .services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 700px;
+  }
+  #s4 .svc {
+    background: var(--navy);
+    color: var(--white);
+    padding: 24px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  #s4 .svc:hover { transform: translateY(-4px); }
+  #s4 .svc::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  #s4 .svc-icon {
+    font-size: 28px; margin-bottom: 12px;
+  }
+  #s4 .svc-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(14px, 2.2vw, 20px);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  #s4 .svc-desc {
+    font-size: clamp(9px, 1.3vw, 12px);
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* ── SCENE 4b: 일반정비 ── */
+  #s4b {
+    background: #0e1820;
+    overflow: hidden;
+    flex-direction: row;
+    align-items: stretch;
+  }
+  #s4b .left-panel {
+    width: 48%;
+    background: var(--navy-mid);
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 60px);
+    position: relative;
+    overflow: hidden;
+  }
+  #s4b .left-panel::before {
+    content: '정비';
+    position: absolute;
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(100px, 18vw, 220px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    bottom: -20px; right: -10px;
+    line-height: 1;
+    user-select: none;
+  }
+  #s4b .right-panel {
+    width: 52%;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 60px);
+    gap: 12px;
+  }
+  #s4b .panel-tag {
+    font-size: clamp(10px, 1.4vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  #s4b .panel-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(26px, 5vw, 56px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  #s4b .panel-title em { color: var(--accent); font-style: normal; }
+  #s4b .repair-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  #s4b .ritem {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+  }
+  #s4b .ritem-icon { font-size: 20px; flex-shrink: 0; }
+  #s4b .ritem-body {}
+  #s4b .ritem-text { font-size: clamp(12px, 1.6vw, 15px); color: var(--white); font-weight: 500; }
+  #s4b .ritem-sub { font-size: clamp(10px, 1.2vw, 12px); color: var(--gray); margin-top: 2px; }
+
+  /* ── SCENE 4c: 판금도색 ── */
+  #s4c {
+    overflow: hidden;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  #s4c .paint-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1a0a00 0%, #2d1200 40%, #0a1520 100%);
+  }
+  #s4c .paint-stripe {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      60deg, transparent, transparent 80px,
+      rgba(232,184,75,0.03) 80px, rgba(232,184,75,0.03) 81px
+    );
+  }
+  #s4c .paint-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    width: 100%; max-width: 800px;
+  }
+  #s4c .paint-tag {
+    font-size: clamp(10px, 1.4vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  #s4c .paint-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(30px, 6.5vw, 72px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  #s4c .paint-title em { color: var(--accent); font-style: normal; }
+  #s4c .paint-sub {
+    font-size: clamp(12px, 1.8vw, 16px);
+    color: var(--gray);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+  #s4c .paint-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    width: 100%;
+  }
+  #s4c .pcard {
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(232,184,75,0.2);
+    padding: clamp(16px, 2.5vw, 26px) clamp(12px, 2vw, 18px);
+    position: relative;
+    overflow: hidden;
+  }
+  #s4c .pcard::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+  #s4c .pcard-icon { font-size: 24px; margin-bottom: 10px; }
+  #s4c .pcard-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(13px, 2vw, 19px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  #s4c .pcard-desc {
+    font-size: clamp(10px, 1.3vw, 12px);
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  /* ── SCENE 5: CTA ── */
+  #s5 {
+    background: var(--navy);
+    flex-direction: column;
+    text-align: center;
+    overflow: hidden;
+  }
+  #s5 .bg-lines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(26,75,140,0.08) 40px,
+      rgba(26,75,140,0.08) 41px
+    );
+  }
+  #s5 .cta-wrap {
+    position: relative; z-index: 2;
+  }
+  #s5 .logo-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(28px, 6vw, 72px);
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+  #s5 .logo-sub {
+    font-size: clamp(11px, 1.8vw, 17px);
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    margin-bottom: 40px;
+  }
+  #s5 .info-line {
+    font-size: clamp(12px, 2vw, 18px);
+    color: var(--gray);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  #s5 .phone {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(32px, 7vw, 84px);
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin: 16px 0 24px;
+  }
+  #s5 .cta-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--navy);
+    font-size: clamp(13px, 2vw, 18px);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 16px 48px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #s5 .cta-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 8px 40px rgba(232,184,75,0.4);
+  }
+
+  /* ── TRANSITIONS ── */
+  .fade-in {
+    animation: fadeIn 0.8s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-left {
+    animation: slideLeft 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes slideLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .slide-right {
+    animation: slideRight 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes slideRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .scale-in {
+    animation: scaleIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── NAV DOTS ── */
+  #dots {
+    position: absolute;
+    right: 20px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 100;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot.active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+
+  /* ── SKIP / PLAY HINT ── */
+  #hint {
+    position: absolute;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* Counter animation */
+  .count-anim { display: inline-block; }
+
+  /* Stagger helpers */
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.4s; }
+  .d4 { animation-delay: 0.55s; }
+  .d5 { animation-delay: 0.7s; }
+  .d6 { animation-delay: 0.85s; }
+
+  /* All animated children start invisible */
+  .fade-in, .slide-left, .slide-right, .scale-in {
+    opacity: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="bg"></canvas>
+
+  <!-- SCENE 1: OPENING DRIVE -->
+  <div class="scene" id="s1">
+    <div class="mountains">
+      <svg width="100%" height="100%" viewBox="0 0 1200 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="0,180 120,60 240,120 380,20 520,100 660,40 800,90 950,10 1100,70 1200,50 1200,180" fill="#0d1520" opacity="0.9"/>
+        <polygon points="0,180 80,90 180,140 300,60 440,130 580,70 720,120 880,40 1020,100 1200,60 1200,180" fill="#0f1c2e" opacity="0.7"/>
+      </svg>
+    </div>
+    <div class="road"></div>
+    <svg class="car" viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="25" width="170" height="35" rx="8" fill="#1a3060"/>
+      <rect x="35" y="8" width="110" height="28" rx="6" fill="#1a3060"/>
+      <rect x="42" y="12" width="44" height="18" rx="3" fill="#2a4a8e" opacity="0.8"/>
+      <rect x="94" y="12" width="44" height="18" rx="3" fill="#2a4a8e" opacity="0.8"/>
+      <circle cx="45" cy="60" r="12" fill="#111"/>
+      <circle cx="45" cy="60" r="6" fill="#333"/>
+      <circle cx="155" cy="60" r="12" fill="#111"/>
+      <circle cx="155" cy="60" r="6" fill="#333"/>
+      <ellipse cx="18" cy="38" rx="10" ry="7" fill="#E8B84B" opacity="0.85"/>
+      <ellipse cx="10" cy="38" rx="6" ry="5" fill="#F5D080" opacity="0.5"/>
+    </svg>
+    <div class="tagline fade-in">
+      차 한 대,<br><span>믿을 수 있는 곳</span>이 있어야죠.
+    </div>
+  </div>
+
+  <!-- SCENE 2: 30-YEAR HISTORY -->
+  <div class="scene" id="s2">
+    <div class="bg-grid"></div>
+    <div class="year">1994</div>
+    <div class="content">
+      <div class="badge fade-in">Since 1994</div>
+      <h2 class="fade-in d1">양평현대모터스<br><em>30년의 역사</em></h2>
+      <p class="sub fade-in d2">경기도 양평군 · 1급 자동차종합정비업</p>
+      <div class="timeline">
+        <div class="titem scale-in d2">
+          <div class="num" id="c1">0</div>
+          <div class="label">창업 이래</div>
+        </div>
+        <div class="titem scale-in d3">
+          <div class="num" id="c2">0</div>
+          <div class="label">전문 스태프</div>
+        </div>
+        <div class="titem scale-in d4">
+          <div class="num" id="c3">0</div>
+          <div class="label">연간 정기검사</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3: 정기검사 -->
+  <div class="scene" id="s3">
+    <div class="split-left">
+      <div class="icon-wrap slide-left">
+        <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="25" cy="25" r="22" stroke="#E8B84B" stroke-width="1.5"/>
+          <path d="M14 25L22 33L36 17" stroke="#E8B84B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="left-title slide-left d1">자동차<br>정기검사</div>
+      <div class="left-sub slide-left d2">
+        전문 장비로 꼼꼼하게<br>빠르고 정확하게<br>031-775-0020
+      </div>
+    </div>
+    <div class="split-right">
+      <div class="check-badge slide-right">검사<br>합격!</div>
+      <div class="check-sub slide-right d1">정기검사 수수료 안내</div>
+      <div class="price-row">
+        <div class="price-item slide-right d2"><span>일반 승용차</span><span>40,000원</span></div>
+        <div class="price-item slide-right d3"><span>경형 차량</span><span>35,000원</span></div>
+        <div class="price-item slide-right d4"><span>대형 차량</span><span>50,000원</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4: SERVICES -->
+  <div class="scene" id="s4">
+    <div class="s4-title fade-in">한 곳에서, 다 됩니다</div>
+    <div class="s4-sub fade-in d1">양평현대모터스 6가지 전문 서비스</div>
+    <div class="services">
+      <div class="svc scale-in d1">
+        <div class="svc-icon">🔧</div>
+        <div class="svc-name">종합정비</div>
+        <div class="svc-desc">엔진·미션<br>전자장치 전반</div>
+      </div>
+      <div class="svc scale-in d2">
+        <div class="svc-icon">🚗</div>
+        <div class="svc-name">정기검사</div>
+        <div class="svc-desc">국가 지정<br>전문 검사소</div>
+      </div>
+      <div class="svc scale-in d3">
+        <div class="svc-icon">🎨</div>
+        <div class="svc-name">판금·도장</div>
+        <div class="svc-desc">사고수리<br>외판 복원</div>
+      </div>
+      <div class="svc scale-in d4">
+        <div class="svc-icon">⚙️</div>
+        <div class="svc-name">소모품 교환</div>
+        <div class="svc-desc">오일·브레이크<br>타이어 등</div>
+      </div>
+      <div class="svc scale-in d5">
+        <div class="svc-icon">🔋</div>
+        <div class="svc-name">전기·전자</div>
+        <div class="svc-desc">배터리·EV<br>전장 진단</div>
+      </div>
+      <div class="svc scale-in d6">
+        <div class="svc-icon">🛡️</div>
+        <div class="svc-name">보험 수리</div>
+        <div class="svc-desc">보험사 직접<br>청구 대행</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4b: 일반정비 -->
+  <div class="scene" id="s4b">
+    <div class="left-panel">
+      <div class="panel-tag fade-in">GENERAL REPAIR</div>
+      <div class="panel-title fade-in d1">일반 정비<br><em>전 차종</em> 가능</div>
+      <svg viewBox="0 0 260 180" width="100%" style="max-width:280px;margin-top:16px;" xmlns="http://www.w3.org/2000/svg" class="fade-in d2">
+        <!-- Car body -->
+        <rect x="30" y="90" width="200" height="50" rx="8" fill="#1a3060"/>
+        <rect x="55" y="65" width="130" height="35" rx="6" fill="#1a3060"/>
+        <rect x="63" y="70" width="50" height="24" rx="3" fill="#2a4a8e" opacity="0.7"/>
+        <rect x="120" y="70" width="50" height="24" rx="3" fill="#2a4a8e" opacity="0.7"/>
+        <!-- Wheels -->
+        <circle cx="75" cy="140" r="18" fill="#111"/><circle cx="75" cy="140" r="8" fill="#2a2a2a"/>
+        <circle cx="185" cy="140" r="18" fill="#111"/><circle cx="185" cy="140" r="8" fill="#2a2a2a"/>
+        <!-- Lift -->
+        <rect x="50" y="155" width="160" height="6" rx="3" fill="#E8B84B" opacity="0.7"/>
+        <rect x="58" y="158" width="10" height="20" rx="2" fill="#8A9AB5"/>
+        <rect x="192" y="158" width="10" height="20" rx="2" fill="#8A9AB5"/>
+        <!-- Wrench icon -->
+        <g transform="translate(210,60) rotate(45)">
+          <rect x="-4" y="-22" width="8" height="30" rx="3" fill="#E8B84B" opacity="0.8"/>
+          <circle cx="0" cy="-22" r="8" fill="none" stroke="#E8B84B" stroke-width="2.5" opacity="0.8"/>
+        </g>
+      </svg>
+    </div>
+    <div class="right-panel">
+      <div class="panel-tag slide-right">주요 정비 항목</div>
+      <div class="repair-list">
+        <div class="ritem slide-right d1">
+          <div class="ritem-icon">⚙️</div>
+          <div class="ritem-body">
+            <div class="ritem-text">엔진 · 미션 정비</div>
+            <div class="ritem-sub">오일 교환, 필터류, 벨트 점검</div>
+          </div>
+        </div>
+        <div class="ritem slide-right d2">
+          <div class="ritem-icon">🛞</div>
+          <div class="ritem-body">
+            <div class="ritem-text">브레이크 · 서스펜션</div>
+            <div class="ritem-sub">패드, 디스크, 쇽업쇼버 교체</div>
+          </div>
+        </div>
+        <div class="ritem slide-right d3">
+          <div class="ritem-icon">🔋</div>
+          <div class="ritem-body">
+            <div class="ritem-text">전기 · 전자 진단</div>
+            <div class="ritem-sub">배터리, 발전기, 경고등 점검</div>
+          </div>
+        </div>
+        <div class="ritem slide-right d4">
+          <div class="ritem-icon">❄️</div>
+          <div class="ritem-body">
+            <div class="ritem-text">냉·난방 (에어컨)</div>
+            <div class="ritem-sub">냉매 보충, 히터 코어 점검</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4c: 판금도색 -->
+  <div class="scene" id="s4c">
+    <div class="paint-bg"></div>
+    <div class="paint-stripe"></div>
+    <div class="paint-content">
+      <div class="paint-tag fade-in">PANEL BEATING &amp; PAINTING</div>
+      <div class="paint-title fade-in d1">판금 · 도색<br><em>사고 수리</em> 전문</div>
+      <div class="paint-sub fade-in d2">
+        긁힘·찌그러짐부터 전체 도장까지 — 출고 당시 상태로 복원합니다
+      </div>
+      <div class="paint-cards">
+        <div class="pcard scale-in d2">
+          <div class="pcard-icon">🔨</div>
+          <div class="pcard-name">판금 복원</div>
+          <div class="pcard-desc">패널 찌그러짐<br>덴트 복원<br>사고 외판 수리</div>
+        </div>
+        <div class="pcard scale-in d3">
+          <div class="pcard-icon">🎨</div>
+          <div class="pcard-name">도색 · 도장</div>
+          <div class="pcard-desc">부분 도색<br>전체 도장<br>색상 완벽 매칭</div>
+        </div>
+        <div class="pcard scale-in d4">
+          <div class="pcard-icon">🚘</div>
+          <div class="pcard-name">보험 수리</div>
+          <div class="pcard-desc">보험사 직접 청구<br>렌트카 연결<br>신속 출고</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 5: CTA -->
+  <div class="scene" id="s5">
+    <div class="bg-lines"></div>
+    <div class="cta-wrap">
+      <div class="logo-text fade-in">양평현대모터스</div>
+      <div class="logo-sub fade-in d1">1급 자동차종합정비업 · 정기검사 전문</div>
+      <div class="info-line fade-in d2">📍 경기도 양평군 양평읍 양근로 367</div>
+      <div class="phone fade-in d3">031-775-0020</div>
+      <button class="cta-btn scale-in d4">지금 바로 전화하기</button>
+    </div>
+  </div>
+
+  <!-- NAV DOTS -->
+  <div id="dots">
+    <div class="dot active" onclick="goTo(0)"></div>
+    <div class="dot" onclick="goTo(1)"></div>
+    <div class="dot" onclick="goTo(2)"></div>
+    <div class="dot" onclick="goTo(3)"></div>
+    <div class="dot" onclick="goTo(4)"></div>
+    <div class="dot" onclick="goTo(5)"></div>
+    <div class="dot" onclick="goTo(6)"></div>
+  </div>
+
+  <div id="progress"></div>
+
+</div>
+
+<script>
+const scenes = document.querySelectorAll('.scene');
+const dots = document.querySelectorAll('.dot');
+const progress = document.getElementById('progress');
+const durations = [4000, 4500, 5000, 5000, 5500, 5500, 6000]; // ms per scene
+let current = 0;
+let timer = null;
+let startTime = null;
+let rafId = null;
+
+// Particle canvas for scene 5
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticles() {
+  particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      opacity: Math.random() * 0.4 + 0.1
+    });
+  }
+}
+createParticles();
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (current !== 6) { // Only draw on last scene
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    rafId = requestAnimationFrame(drawParticles);
+    return;
+  }
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(232,184,75,${p.opacity})`;
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+  });
+  rafId = requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Counter animation
+function animateCounter(el, target, suffix, duration) {
+  let start = null;
+  const step = ts => {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / duration, 1);
+    const val = Math.floor(p * target);
+    el.textContent = val + suffix;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target + suffix;
+  };
+  requestAnimationFrame(step);
+}
+
+function activateScene(idx) {
+  // Hide all
+  scenes.forEach(s => {
+    s.style.opacity = '0';
+    s.classList.remove('active');
+  });
+
+  // Show current
+  const s = scenes[idx];
+  s.style.opacity = '1';
+  s.classList.add('active');
+
+  // Re-trigger animations by cloning and re-inserting
+  const animEls = s.querySelectorAll('.fade-in, .slide-left, .slide-right, .scale-in');
+  animEls.forEach(el => {
+    el.style.opacity = '0';
+    void el.offsetWidth;
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+
+  // Scene-specific triggers
+  if (idx === 1) {
+    setTimeout(() => {
+      animateCounter(document.getElementById('c1'), 30, '년', 1500);
+      animateCounter(document.getElementById('c2'), 6, '명', 1000);
+      animateCounter(document.getElementById('c3'), 2730, '건+', 2000);
+    }, 400);
+  }
+
+  // Update dots
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+
+  // Progress bar
+  if (rafId) {}
+  startTime = performance.now();
+  animateProgress(idx);
+}
+
+function animateProgress(idx) {
+  const dur = durations[idx];
+  function step(ts) {
+    const elapsed = ts - startTime;
+    const pct = Math.min(elapsed / dur * 100, 100);
+    progress.style.width = pct + '%';
+    if (pct < 100 && current === idx) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= scenes.length) return;
+  current = idx;
+  clearTimeout(timer);
+  progress.style.transition = 'none';
+  progress.style.width = '0%';
+  activateScene(idx);
+  if (idx < scenes.length - 1) {
+    timer = setTimeout(() => goTo(idx + 1), durations[idx]);
+  } else {
+    timer = setTimeout(() => goTo(0), durations[idx]);
+  }
+}
+
+// CTA button
+document.querySelector('.cta-btn').addEventListener('click', () => {
+  window.open('tel:031-775-0020');
+});
+
+// Start
+goTo(0);
+</script>
+</body>
+</html>
